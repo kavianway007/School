@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>School Products E-Commerce - Dark Theme</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  h1 { 
+    text-align: center; 
+    color: #00d4ff;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    margin-bottom: 30px;
+    font-size: 2.5em;
+  }
+  
+  h2 { 
+    color: #ffffff;
+    border-bottom: 2px solid #00d4ff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+  }
+  
+  .product {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .product:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+    border-color: #00d4ff;
+  }
+  
+  .product img {
+    max-width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .product h3 {
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+  }
+  
+  .product p {
+    color: #00ff88;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .add-cart-btn {
+    padding: 12px 24px;
+    background: linear-gradient(45deg, #00d4ff, #0099cc);
+    border: none;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+  }
+  
+  .add-cart-btn:hover {
+    background: linear-gradient(45deg, #0099cc, #00d4ff);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+  }
+  
+  #cart-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+  }
+  
+  .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(30, 30, 50, 0.95);
+    border: 2px solid #00d4ff;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    color: #00d4ff;
+    cursor: pointer;
+  }
+  
+  form {
+    max-width: 500px;
+    margin: 0 auto 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+  }
+  
+  form div {
+    margin-bottom: 18px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: bold;
+  }
+  
+  input[type=text], select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 16px;
+  }
+  
+  input[type=text]::placeholder, select option {
+    color: #b0b0b0;
+  }
+  
+  select option {
+    background: #1a1a2e;
+    color: #ffffff;
+  }
+  
+  #cart {
+    max-width: 800px;
+    margin: 0 auto 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+  }
+  
+  #cart table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  
+  #cart th, #cart td {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px;
+    text-align: center;
+    color: #e0e0e0;
+  }
+  
+  #cart th {
+    background: rgba(0, 212, 255, 0.2);
+    color: #ffffff;
+  }
+  
+  #total {
+    font-size: 1.5em;
+    color: #00ff88;
+    text-align: right;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  
+  #purchase-btn {
+    display: block;
+    margin: 30px auto;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  }
+  
+  #purchase-btn:hover {
+    background: linear-gradient(45deg, #ee5a52, #ff6b6b);
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+  }
+  
+  #confirmation {
+    text-align: center;
+    font-size: 24px;
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+    border: 2px solid #00ff88;
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 700px;
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .products {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>🛒 School Products Store</h1>
+
+<div class="products" id="products-list">
+  <!-- Products will be injected here -->
+</div>
+
+<div id="cart-modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeCartModal()">&times;</span>
+    <h2>🛒 Your Cart Items</h2>
+    <div id="modal-cart-items"></div>
+    <div id="modal-total" style="margin-top: 20px; font-size: 1.3em; color: #00ff88;"></div>
+    <button class="add-cart-btn" onclick="closeCartModal()" style="margin-top: 20px; width: 100%;">Continue Shopping</button>
+  </div>
+</div>
+
+<form id="student-form">
+  <h2>📝 Student Details</h2>
+  <div>
+    <label for="student-class">Class</label>
+    <select id="student-class" required>
+      <option value="">Select Class</option>
+      <option>11</option>
+      <option>12</option>
+    </select>
+  </div>
+  <div>
+    <label for="student-name">Name of Student</label>
+    <input type="text" id="student-name" placeholder="Enter student name" required />
+  </div>
+  <div>
+    <label for="student-stream">Stream</label>
+    <select id="student-stream" required>
+      <option value="">Select Stream</option>
+      <option>Science</option>
+      <option>Commerce</option>
+      <option>Arts</option>
+    </select>
+  </div>
+  <div>
+    <label for="roll-number">Roll Number</label>
+    <input type="text" id="roll-number" placeholder="Enter roll number" required />
+  </div>
+  <div>
+    <label for="admission-number">Admission Number</label>
+    <input type="text" id="admission-number" placeholder="Enter admission number" required />
+  </div>
+</form>
+
+<div id="cart">
+  <h2>🛒 Shopping Cart Summary</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Price (₹)</th>
+        <th>Total (₹)</th>
+      </tr>
+    </thead>
+    <tbody id="cart-items">
+      <tr><td colspan="4">Cart is empty</td></tr>
+    </tbody>
+  </table>
+  <div id="total">Total: ₹0</div>
+</div>
+
+<button id="purchase-btn">💳 Complete Purchase</button>
+
+<div id="confirmation"></div>
+
+<script>
+  const products = [
+    { id: 1, name: "School Notebook", price: 50, img: "schoolnotebook.jpg" },
+    { id: 2, name: "School Uniform", price: 300, img: "schooluniform.jpg" },
+    { id: 3, name: "House Uniform", price: 350, img: "schoolhouesuniform.jpg" },
+    { id: 4, name: "School Bag", price: 800, img: "schoolbag.jpg" },
+    { id: 5, name: "School Socks", price: 40, img: "schoolsocks.jpg" },
+    { id: 6, name: "Water Bottle", price: 120, img: "waterbottle.jpg" },
+    { id: 7, name: "Tiffin Box", price: 250, img: "lunchbox.jpg" },
+    { id: 8, name: "Pens Pack", price: 60, img: "penspack.jpg" },
+    { id: 9, name: "School Tie", price: 150, img: "schooltie.jpg" },
+    { id: 10, name: "School Shoes", price: 900, img: "schoolshoe.jpg" }
+  ];
+
+  const cart = [];
+
+  const productsList = document.getElementById("products-list");
+  const cartItems = document.getElementById("cart-items");
+  const cartModal = document.getElementById("cart-modal");
+  const modalCartItems = document.getElementById("modal-cart-items");
+  const confirmation = document.getElementById("confirmation");
+  const purchaseBtn = document.getElementById("purchase-btn");
+  const totalDiv = document.getElementById("total");
+  const modalTotal = document.getElementById("modal-total");
+
+  // Show products
+  function displayProducts() {
+    productsList.innerHTML = products.map(p =>
+      `<div class="product">
+         <img src="${p.img}" alt="${p.name}" />
+         <h3>${p.name}</h3>
+         <p>₹${p.price}</p>
+         <button class="add-cart-btn" onclick="addToCart(${p.id})">🛒 Add to Cart</button>
+       </div>`
+    ).join("");
+  }
+
+  // Add to cart
+  function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const cartItem = cart.find(item => item.id === id);
+    if (cartItem) {
+      cartItem.qty++;
+    } else {
+      cart.push({ ...product, qty: 1 });
+    }
+    updateCart();
+    showNotification("Item added to cart!");
+  }
+
+  // Update cart display
+  function updateCart() {
+    if (cart.length === 0) {
+      cartItems.innerHTML = `<tr><td colspan="4" style="color: #b0b0b0;">Cart is empty</td></tr>`;
+      totalDiv.textContent = "Total: ₹0";
+      return;
+    }
+    
+    let html = "";
+    let total = 0;
+    cart.forEach(item => {
+      const itemTotal = item.price * item.qty;
+      total += itemTotal;
+      html += `<tr>
+        <td>${item.name}</td>
+        <td>${item.qty}</td>
+        <td>₹${item.price}</td>
+        <td>₹${itemTotal}</td>
+      </tr>`;
+    });
+    
+    cartItems.innerHTML = html;
+    totalDiv.textContent = `Total: ₹${total}`;
+  }
+
+  // Show cart modal
+  function showCartModal() {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+    
+    let html = "";
+    let total = 0;
+    cart.forEach(item => {
+      const itemTotal = item.price * item.qty;
+      total += itemTotal;
+      html += `<div style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+        <strong>${item.name}</strong> x${item.qty} = ₹${itemTotal}
+      </div>`;
+    });
+    
+    modalCartItems.innerHTML = html;
+    modalTotal.textContent = `Total Amount: ₹${total}`;
+    cartModal.style.display = "block";
+  }
+
+  function closeCartModal() {
+    cartModal.style.display = "none";
+  }
+
+  // Notification
+  function showNotification(message) {
+    const notification = document.createElement("div");
+    notification.style.cssText = `
+      position: fixed; top: 20px; right: 20px; 
+      background: linear-gradient(45deg, #00ff88, #00cc6a);
+      color: white; padding: 15px 25px; 
+      border-radius: 25px; font-weight: bold;
+      box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+      z-index: 10000; transform: translateX(400px);
+      transition: transform 0.3s ease;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.style.transform = "translateX(0)", 100);
+    setTimeout(() => {
+      notification.style.transform = "translateX(400px)";
+      setTimeout(() => document.body.removeChild(notification), 300);
+    }, 2000);
+  }
+
+  // Purchase
+  purchaseBtn.addEventListener("click", () => {
+    const studentClass = document.getElementById("student-class").value;
+    const studentName = document.getElementById("student-name").value.trim();
+    const studentStream = document.getElementById("student-stream").value;
+    const rollNumber = document.getElementById("roll-number").value.trim();
+    const admissionNumber = document.getElementById("admission-number").value.trim();
+
+    if (cart.length === 0) {
+      alert("Please add items to cart first!");
+      return;
+    }
+    
+    if (!studentClass || !studentName || !studentStream || !rollNumber || !admissionNumber) {
+      alert("Please fill all student details!");
+      return;
+    }
+
+    confirmation.innerHTML = `
+      <strong>✅ Your order is confirmed!</strong><br><br>
+      Thank you, <strong>${studentName}</strong> (${studentClass}-${studentStream})<br>
+      Roll: ${rollNumber} | Admission: ${admissionNumber}<br><br>
+      Order processed successfully! 🎉
+    `;
+    confirmation.style.display = "block";
+    
+    cart.length = 0;
+    updateCart();
+    document.getElementById("student-form").reset();
+    purchaseBtn.textContent = "🎉 Order Placed!";
+    
+    setTimeout(() => {
+      confirmation.style.display = "none";
+      purchaseBtn.textContent = "💳 Complete Purchase";
+    }, 5000);
+  });
+
+  // Close modal on outside click
+  window.onclick = function(event) {
+    if (event.target == cartModal) {
+      closeCartModal();
+    }
+  }
+
+  // Initial load
+  displayProducts();
+  updateCart();
+</script>
+
+</body>
+</html>
